@@ -6,7 +6,7 @@ import os
 from routes.login_logout.login_logout_userAdmin import login_logout_bp
 load_dotenv()
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY')
+app.secret_key = os.getenv('SECRET_KEY') #ganti dengan string random
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bf)
 app.register_blueprint(login_logout_bp)
