@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Search Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <input type="text" id="searchInput" placeholder="Cari...">
+    <ul id="searchResults"></ul>
+
+    <script>
+        // Fungsi untuk melakukan live search
+        function liveSearch() {
+            var searchTerm = $('#searchInput').val();
+
+            // Mengirim permintaan AJAX ke server-side
+            $.ajax({
+                url: '/search',
+                type: 'POST',
+                data: {
+                    searchTerm: searchTerm
+                },
+                success: function(response) {
+                    var results = response.results;
+                    var searchResults = $('#searchResults');
+                    searchResults.empty();
+
+                    // Menambahkan hasil pencarian ke elemen <ul>
+                    results.forEach(function(result) {
+                        searchResults.append('<li>' + result + '</li>');
+                    });
+                }
+            });
+        }
+
+        // Mengikat event 'keyup' pada input pencarian
+        $('#searchInput').keyup(function() {
+            liveSearch();
+        });
+    </script>
+</body>
+</html>
