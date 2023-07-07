@@ -1,0 +1,43 @@
+<nav class="navbar navbar-expand-sm bg-dark">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#collapsingNavbar">
+     <span class="navbar-toggler-icon"></span>
+    </button>    
+    <div class="navbar-collapse collapse" id="collapsingNavbar">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+			{%if session['role'] == 'admin'%}
+           <h1><a class="nav-link" href="#">Management Perpustakaan<span class="sr-only">LMS</span></a></h1>
+		   {%else%}
+           <h1><a class="nav-link" href="#">Dashboard User<span class="sr-only">LMS</span></a></h1>
+			{%endif%}
+        </li>       
+      </ul> 	  
+	  {% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+   
+    {% for category, message in messages %}
+    <!-- alert -->
+    <div id="myAlert" class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+<script>
+    setTimeout(function() {
+        var alertElement = document.getElementById('myAlert');
+        if (alertElement) {
+            alertElement.remove();
+        }
+    }, 3000);
+</script>
+	  <ul class="navbar-nav ml-auto">		
+			<li class="nav-item">
+				<h4><a class="nav-link" id="update_me" data-bs-toggle="modal" data-bs-target="#update_me" href="">Hallo {{session['nama']}} </a> </h4>
+			</li>		
+      </ul>	  
+    </div>	
+  </nav>
+  
+  
+  

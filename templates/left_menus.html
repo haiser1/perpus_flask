@@ -1,0 +1,34 @@
+<div class="col-md-3 col-lg-2 sidebar-offcanvas bg-dark fixed-height-sidebar shadow-lg" id="sidebar" role="navigation">
+<ul class="nav flex-column pl-1 leftMenus">
+	{% if session['role'] == 'admin' %}		
+<li class="nav-item">
+	<a class="nav-link" href="{{ url_for('admin_bp.dashboard') }}"><strong>Dashboard</strong></a>
+</li>
+<li class="nav-item">
+	<a class="nav-link" href="{{url_for('admin_bp.show')}}"><strong>Peminjaman</strong></a>
+</li>
+<li class="nav-item">
+	<a class="nav-link" href="{{url_for('admin_bp.show_pengembalian')}}"><strong>Pengembalian</strong></a>
+</li>
+<li class="nav-item">
+	<a class="nav-link" href="{{url_for('admin_bp.user')}}"><strong>Anggota</strong></a>
+</li>
+<li class="nav-item"><a class="nav-link" href="{{url_for('admin_bp.petugas')}}"><strong>Petugas</strong></a>
+</li>
+<li class="nav-item"><a class="nav-link" href="{{url_for('admin_bp.books')}}"><strong>Manage Books</strong></a></li>
+<br><br><br><br><br><br><br><br><br><br>
+<li class="nav-item logout-link"><a class="nav-link" href="{{url_for('login_logout_bp.logout')}}"><strong>Logout</strong></a></li>
+<br><br>
+{%else%}
+<li class="nav-item logout-link"><a class="nav-link" href="{{url_for('user_bp.pinjam_aktif')}}"><strong>Peminjaman Aktif</strong></a></li>
+<li class="nav-item logout-link"><a class="nav-link" href="{{url_for('user_bp.history')}}"><strong>History</strong></a></li>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<li class="nav-item logout-link"><a class="nav-link" href="{{url_for('login_logout_bp.logout_user')}}"><strong>Logout</strong></a></li>
+<br><br><br>
+{%endif%}
+</ul>
+</div>
+
+
+
+

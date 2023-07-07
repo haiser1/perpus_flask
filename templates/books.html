@@ -1,0 +1,97 @@
+{% include 'header.html' %}
+<script src="{{ url_for('static',filename='js/books.js') }}"></script>
+<body>
+  <div class="container-fluid" id="main">
+	{% include 'top_menus.html' %}  	
+    <div class="row row-offcanvas row-offcanvas-left">   
+	  {% include 'left_menus.html' %}	
+      <div class="col-md-9 col-lg-10 main"> 
+		<h3>Book Listing</h3>
+			<br>
+			<div class="float-right mb-2 col-md-2">
+				<button type="button" id="addBook" class="btn btn-info" title="Add book"><span class="glyphicon glyphicon-plus">Add Book</span></button>
+			</div>
+			<br><br>			
+			<table class="table table-striped">
+			<thead>
+			  <tr>
+				<th>Judul Buku</th>
+				<th>Penulis</th>	
+				<th>Penerbit</th>		
+				<th>Tahun Terbit</th>						
+				<th>Stok</th>
+				<th>Petugas</th>				
+			  </tr>
+			</thead>
+			<tbody>
+				{%for data in datas%}
+				  <tr>
+					<!-- <td>
+						<img src="../static/images/default.jpg" width="80" height="90">				
+					</td> -->
+					
+					<td>{{data[0]}}</td>
+					<td>{{data[2]}}</td>
+					<td>{{data[3]}}</td>
+					<td>{{data[4]}}</td>
+					<td>{{data[5]}}</td>
+					<td>{{data[7]}}</td>				
+					<td><a href="{{url_for('admin_bp.edit_book', id=data[1])}}" class="btn btn-primary">Edit</a></td>	
+					<td><a href="{{url_for('admin_bp.delete_book', id=data[1])}}" 
+						onclick="return confirm('yakin akan menghapus Data ???')" class="btn btn-danger">Delete</a></td>
+					
+				  </tr>
+				  {%endfor%} 
+			</tbody>
+		  </table>	      
+        <hr>
+		<table class="table table-bordered mb-0">
+			<thead>
+			  <tr>
+				<th scope="col"> <h6>Total Stok Buku : {{stok[0]}}</h6></th>
+				</tr>
+			</thead>
+		</table>         
+       </div>       
+      </div>     
+    </div>
+
+	<div id="bookModal" class="modal fade">
+		<div class="modal-dialog">
+			<form method="post" id="bookForm" action="{{url_for('admin_bp.add_book')}}">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title"><i class="fa fa-plus"></i></h4>
+					</div>
+					<div class="modal-body">						
+						<div class="form-group">							
+							<label for="book" class="control-label">Judul Buku</label>							
+							<input type="text" name="judul" id="name" autocomplete="off" class="form-control" placeholder="Judul Buku"/>											
+						</div>
+						<div class="form-group">							
+							<label for="author" class="control-label">Penulis</label>
+							<input type="text" name="penulis" id="name" autocomplete="off" class="form-control" placeholder="Penulis"/>											
+						</div>							
+						<div class="form-group">							
+							<label for="publisher" class="control-label">Penerbit</label>
+							<input type="text" name="penerbit" id="name" autocomplete="off" class="form-control" placeholder="Penerbit"/>	
+						</div>
+						<div class="form-group">							
+							<label for="category" class="control-label">Tahun Terbit</label>
+							<input type="number" name="tahun_terbit" id="name" autocomplete="off" class="form-control" placeholder="Tahun Terbit"/>		
+						</div>								
+						<div class="form-group">							
+							<label for="rack" class="control-label">Stok</label>
+							<input type="number" name="stok" id="name" autocomplete="off" class="form-control" placeholder="Stok"/>		
+						</div>																										
+					</div>
+					<div class="modal-footer mt-0">
+						<input type="submit" name="save" id="save" class="btn btn-info" value="Save" />
+						<button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>	
+  </body>
+</html>

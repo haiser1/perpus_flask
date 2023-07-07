@@ -1,0 +1,103 @@
+
+{% include 'header.html' %}
+<body>
+  <div class="container-fluid" id="main">
+  {% include 'top_menus.html' %}  	
+    <div class="row row-offcanvas row-offcanvas-left">
+      {% include 'left_menus.html' %}
+      <div class="col-md-9 col-lg-10 main"> 
+        {%if session['role'] == 'admin'%}
+		<h2>Dashboard Petugas</h2>
+    {%for x in data%} 
+    
+        <div class="row mb-3 shadow-lg ">		
+          <div class="col-xl-3 col-lg-6 shadow-lg">
+            <div class="card card-inverse card-success shadow-lg">
+              <div class="card-block bg-success">
+                <div class="rotate">
+                  <i class="fa fa-user fa-5x"></i>
+                </div>
+                <h6 class="text-uppercase">Total Buku</h6>
+                <h1 class="display-1"><a href="{{url_for('admin_bp.books')}}">{{x[0]}}</a></h1>
+              </div>
+            </div> 
+          </div>        
+          <div class="col-xl-3 col-lg-6 shadow-lg">
+            <div class="card card-inverse card-info">
+              <div class="card-block bg-info">
+                <div class="rotate">
+                  <i class="fa fa-twitter fa-5x"></i>
+                </div>
+                <h6 class="text-uppercase">Jumlah Anggota</h6>
+                <h1 class="display-1"><a href="{{url_for('admin_bp.user')}}">{{x[1]}}</a></h1>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-6 shadow-lg">
+            <div class="card card-inverse card-warning">
+              <div class="card-block bg-warning">
+                <div class="rotate">
+                  <i class="fa fa-share fa-5x"></i>
+                </div>
+                <h6 class="text-uppercase">Buku Dipinjam</h6>
+                <h1 class="display-1"><a href="{{url_for('admin_bp.show')}}">{{pinjam[0][0]}}</a></h1>
+              </div>
+            </div>
+          </div>
+		  <div class="col-xl-3 col-lg-6 shadow-lg">
+            <div class="card card-inverse card-danger">
+              <div class="card-block bg-danger">
+                <div class="rotate">
+                  <i class="fa fa-list fa-4x"></i>
+                </div>
+                <h6 class="text-uppercase">Buku Dikembalikan</h6>
+                <h1 class="display-1"><a href="{{url_for('admin_bp.show_pengembalian')}}">{{kembali[0][0]}}</a></h1>
+              </div>
+            </div>
+          </div>
+        {%endfor%}
+        </div>        
+       </div>       
+      </div>     
+    </div>
+  </div>
+  {%else%}
+  <form method="post" id="userForm" action="">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Data Anda</h4>
+      </div>
+       <div class="modal-body">
+        {%for user in users%}
+          <div class="form-group">
+             <label for="first name" class="control-label">Nim</label>
+             <input type="text" name="nim" id="first_name" autocomplete="off" class="form-control" placeholder="" value="{{user[0]}}" readonly>
+          </div>
+          <div class="form-group">
+             <label for="last name" class="control-label">Nama</label>
+             <input type="text" class="form-control" id="last_name" name="nama" placeholder="" value="{{user[1]}}" readonly>
+          </div>
+          <div class="form-group">
+             <label for="email" class="control-label">Email</label>
+             <input type="email" class="form-control" id="email" name="alamat" placeholder="" value="{{user[2]}}" readonly>
+          </div>
+          <div class="form-group">
+             <label for="email" class="control-label">Alamat</label>
+             <input type="text" class="form-control" id="email" name="alamat" placeholder="" value="{{user[4]}}" readonly>
+          </div>
+          <div class="form-group">
+            <label for="email" class="control-label">No Telpon</label>
+            <input type="number" class="form-control" id="email" name="no_tlp" placeholder="No Telepon" value="{{user[5]}}" readonly>
+         </div>
+       </div>
+       <div class="modal-footer">
+          <a href="{{url_for('user_bp.update_data', nim=user[0])}}"><input type="button" name="update_user" id="save" class="btn btn-info" value="Update Data"/></a>
+          <a href="{{url_for('user_bp.update_password', nim=user[0])}}"><input type="button" name="save" id="save" class="btn btn-warning" value="Update Password" /></a>
+       </div>
+    </div>
+    
+ </form> 
+ {%endfor%}
+  {%endif%}
+  </body>
+</html>

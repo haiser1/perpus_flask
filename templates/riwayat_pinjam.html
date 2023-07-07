@@ -1,0 +1,40 @@
+{% include 'header.html' %}
+<body>
+  <div class="container-fluid" id="main">
+	{% include 'top_menus.html' %}  	
+    <div class="row row-offcanvas row-offcanvas-left">   
+	  {% include 'left_menus.html' %}	
+      <div class="col-md-9 col-lg-10 main"> 
+		<h3>List History Peminjaman</h3>
+			<br>
+			<div class="float-right mb-2 col-md-2">
+				<button type="button" id="addBook" class="btn btn-info" title="Add Peminjaman"><span class="glyphicon glyphicon-plus">Peminjaman</span></button>
+			</div>
+			<br><br>			
+			<table class="table table-striped">
+			<thead>
+			  <tr>
+				<th>Judul Buku</th>	
+				<th>Tgl Pinjam</th>		
+				<th>Batas Peminjaman</th>
+				<th>Tgl Dikembalikan</th>
+				<th>Denda</th>			
+			  </tr>
+			</thead>
+			<tbody>
+				{%for data in datas%}
+				  <tr>				
+					<td>{{data[0]}}</td>
+					<td>{{data[1]}}</td>
+					<td>{{data[2]}}</td>
+					<td>{{data[3]}}</td>
+					<td>{{data[4]}}</td>	
+				  </tr>
+				  
+				  {%endfor%} 
+			</tbody>
+		  </table>	      
+        <hr>         
+       </div>       
+      </div>     
+    </div>
