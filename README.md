@@ -5,3 +5,6 @@
 4. masuk ke virtual env
 5. install requirements.txt dengan cara pip install -r requirements.txt
 4. jalankan server dengan perintah python app.py
+5. akun admin
+6. email : admin@gmail.com
+7. passwd : admin
