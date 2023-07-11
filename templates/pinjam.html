@@ -9,21 +9,21 @@
 		<h3>List Buku Dipinjam</h3>
 			<br>
 			<div class="float-right mb-2 col-md-2">
-				<button type="button" id="addBook" class="btn btn-info" title="Add Peminjaman"><span class="glyphicon glyphicon-plus">Peminjaman</span></button>
+				<button type="button" id="pinjamBook" class="btn btn-info" title="Add Peminjaman"><span class="glyphicon glyphicon-plus">Peminjaman</span></button>
 			</div>
 			<br><br>			
 			<table class="table table-striped">
 			<thead>
 			  <tr>
-				<th>Nim</th>
-				<th>Nama</th>
-				<th>Judul Buku</th>	
-				<th>Tgl Pinjam</th>		
-				<th>Batas Peminjaman</th>
-				<!-- <th>Tgl Kembali</th>		 -->
-				<th>Denda</th>		
-				<th>Status</th>		
-				<th>Petugas</th>
+				<th><h6>Nim</h6></th>
+				<th><h6>Nama</h6></th>
+				<th><h6>Judul Buku</h6></th>	
+				<th><h6>Tgl Pinjam</h6></th>		
+				<th><h6>Batas Peminjaman</h6></th>
+				<th><h6>Denda</h6></th>		
+				<th><h6>Status</h6></th>		
+				<th><h6>Petugas</h6></th>
+				<th><h6>Action</h6></th>
 
 			  </tr>
 			</thead>
@@ -50,7 +50,7 @@
       </div>     
     </div>
 			
-	<div id="bookModal" class="modal fade">
+	<div id="pinjamModal" class="modal fade">
 		<div class="modal-dialog">
 			<form method="post" id="bookForm" action="{{url_for('admin_bp.pinjam')}}">
 				<div class="modal-content">

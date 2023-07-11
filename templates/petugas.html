@@ -6,18 +6,20 @@
     <div class="row row-offcanvas row-offcanvas-left">   
 	  {% include 'left_menus.html' %}	
       <div class="col-md-9 col-lg-10 main"> 
-		<h3>Petugas Listing</h3>
+		<h3>List Petugas</h3>
 			<div class="float-right mb-2 col-md-2">
-				<button type="button" id="addUser" class="btn btn-info" title="Add Petugas"><span class="glyphicon glyphicon-plus">Add Petugas</span></button>
+				<button type="button" id="addpetugas" class="btn btn-info" title="Add Petugas"><span class="glyphicon glyphicon-plus">Add Petugas</span></button>
 			</div>
 			<br>
 			<table class="table table-striped">
 			<thead>
 			  <tr>
-				<th >Nama</th>
-				<th>Email</th>				
-				<th>Alamat</th>
-				<th>No Telpon</th>
+				<th><h6>Nama</h6></th>
+				<th><h6>Email</h6></th>				
+				<th><h6>Alamat</h6></th>
+				<th><h6>No Telpon</h6></th>
+				<th></th>
+				<th><h6>Action</h6></th>
 			  </tr>
 			</thead>
 			<tbody>
@@ -27,10 +29,10 @@
 				<td>{{data[2]}}</td>
 				<td>{{data[4]}}</td>
 				<td>{{data[5]}}</td>	
-				<td><a href="{{url_for('admin_bp.update_petugas', id=data[0])}}" class="btn btn-primary">Edit</a></td>
-				<td><a href="{{url_for('admin_bp.delete_petugas', id=data[0])}}" onclick="return confirm('yakin akan menghapus Data ???')" 
+				<td><a href="{{url_for('admin_bp.update_petugas', uid=data[7])}}" class="btn btn-primary">Edit</a></td>
+				<td><a href="{{url_for('admin_bp.delete_petugas', uid=data[7])}}" onclick="return confirm('yakin akan menghapus Data ???')" 
 					class="btn btn-danger">Delete</a></td>
-					<td><a href="{{url_for('admin_bp.password_change', id=data[0])}}" class="btn btn-warning">Change Password</a></td>
+					<td><a href="{{url_for('admin_bp.password_change', uid=data[7])}}" class="btn btn-warning">Change Password</a></td>
 				
 			  </tr> 
 			{% endfor %}	  

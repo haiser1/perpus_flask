@@ -1,27 +1,27 @@
-from flask import render_template, jsonify, request, session, Blueprint, abort, redirect, url_for, flash
+from flask import render_template, request, session, Blueprint, abort, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
 from connection_db.data_base import db
-from collections import OrderedDict
+from uuid import uuid4
+
 
 user_bp = Blueprint('user_bp', __name__)
 
-@user_bp.route('/update_data/<nim>')
-def update_data(nim):
+@user_bp.route('/update_data/<uid>')
+def update_data(uid):
     if 'loggedin' in session and session['role'] == 'user':
         cur = None
         try:
             cur = db.cursor()
-            cur.execute('SELECT * FROM anggota WHERE nim = %s', (nim))
+            cur.execute('SELECT * FROM anggota WHERE uuid = %s', (uid))
             data = cur.fetchall()
-            if data is None:
+            if not data:
                 flash('Data Not Found', 'danger')
                 return redirect(url_for('admin_bp.dashboard'))
             return(render_template('edit_user.html', datas=data))
 
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='terjadi kesalahan di server'), 500
+            abort(500)
         finally:
 
             if cur:
@@ -39,35 +39,35 @@ def edit_user():
         if nama and email and alamat and no_tlp:
             try:
                 cur = db.cursor()
-                cur.execute('UPDATE anggota SET nama = %s, email = %s, alamat = %s, no_tlp = %s WHERE nim = %s', (nama,email,alamat,no_tlp,session['nim'],))
+                cur.execute('UPDATE anggota SET nama = %s, email = %s, alamat = %s, no_tlp = %s WHERE uuid = %s', (nama,email,alamat,no_tlp,session['uuid'],))
                 db.commit()
                 session['nama'] = nama
                 flash('Data Berhasil Diupdate', 'primary')
                 return redirect(url_for('admin_bp.dashboard'))
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server,'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close()
-        flash('Data Invalid', 'danger')
+        flash('Data Tidak Boleh Kosong', 'danger')
         return redirect(url_for('admin_bp.dashboard'))
     abort(401)    
 
 
 
-@user_bp.route('/update_password/<nim>')
-def update_password(nim):
+@user_bp.route('/update_password/<uid>')
+def update_password(uid):
     if 'loggedin' in session and session['role'] == 'user':
             cur = None
             try:
                 cur = db.cursor()
-                cur.execute('SELECT * FROM anggota WHERE nim = %s', (nim,))
+                cur.execute('SELECT * FROM anggota WHERE uuid = %s', (uid,))
                 data = cur.fetchone()
                 return render_template('password_user.html', datas = data)
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close() 
@@ -78,27 +78,29 @@ def edit_password():
     if 'loggedin' in session and session['role'] == 'user':
         password_lama = request.form['password_lama']
         password_baru = request.form['password_baru']
-        nim = request.form['nim']
+        uid = request.form['uid']
         cur = None
         if password_baru and password_lama: 
             try:
                 cur = db.cursor()
-                cur.execute('SELECT * FROM anggota WHERE nim = %s', (nim,))
+                cur.execute('SELECT * FROM anggota WHERE uuid = %s', (uid,))
                 data = cur.fetchone()
                 if data:
                     if check_password_hash(data[3], password_lama):
-                        cur.execute('UPDATE anggota SET password = %s WHERE nim = %s', (generate_password_hash(password_baru),nim))
+                        cur.execute('UPDATE anggota SET password = %s WHERE uuid = %s', (generate_password_hash(password_baru),uid))
                         db.commit()
                         flash('Password Berhasil Di Update', 'primary')
                         return redirect(url_for('admin_bp.dashboard'))
                 flash('Password Salah', 'danger')
-                return redirect(url_for('user_bp.update_password', nim=nim))
+                return redirect(url_for('user_bp.update_password', uid=uid))
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close() 
+        flash('Password Tidak Boleh Kosong', 'danger')
+        return redirect(url_for('user_bp.update_password', uid=uid))
     abort(401)
 
 
@@ -115,8 +117,7 @@ def pinjam_aktif():
             return render_template('pinjam_user.html', datas=data)
         except Exception as err:
             print(f'Error: {err}')
-            db.rollback()
-            return jsonify(message='terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -135,11 +136,11 @@ def history():
             return render_template('riwayat_pinjam.html', datas=data)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
-    return jsonify(message='Unauthorized'),401
+    abort(401)
 
 
 

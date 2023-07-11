@@ -29,19 +29,19 @@ def dashboard():
             
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
     if 'loggedin' in session and session['role'] == 'user':
             try:
                 cur = db.cursor()
-                cur.execute('SELECT * FROM anggota WHERE nim = %s', (session['nim']))
+                cur.execute('SELECT * FROM anggota WHERE uuid = %s', (session['uuid']))
                 data_user = cur.fetchall()
                 return render_template('dashboard.html', users = data_user)
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close()
@@ -57,7 +57,7 @@ def petugas():
             return render_template('petugas.html', datas = data)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -66,12 +66,12 @@ def petugas():
 @admin_bp.route('/addAkunPetugas', methods=['POST'])
 def add_petugas():
     if 'loggedin' in session and session['role'] == 'admin':
-        # if request.method == 'POST':
         nama = request.form['nama']
         email = request.form['email']
         password = request.form['password']
         alamat = request.form['alamat']
         no_tlp = request.form['no_tlp']
+        uid = str(uuid.uuid4())
         
         cur = None
         if nama and email and password and no_tlp:
@@ -82,32 +82,35 @@ def add_petugas():
                 if data:
                     flash('Email Sudah Terdaftar', 'danger')
                     return redirect(url_for('admin_bp.petugas'))
-                cur.execute('INSERT INTO petugas(nama,email,password,alamat,no_tlp) VALUES(%s,%s,%s,%s,%s)', (nama,email,generate_password_hash(password),alamat,no_tlp,))
+                cur.execute('INSERT INTO petugas(nama,email,password,alamat,no_tlp,uuid) VALUES(%s,%s,%s,%s,%s,%s)', (nama,email,generate_password_hash(password),alamat,no_tlp,uid,))
                 db.commit()
                 flash('Akun Berhasil Didaftar', 'primary')
                 return redirect(url_for('admin_bp.petugas'))
                 
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='gagal, terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close()
         flash('Data Tidak Boleh Kososng', 'danger')
         return redirect(url_for('admin_bp.petugas'))
-    return jsonify(message='Unauthorized'),401
+    abort(401)
 
-@admin_bp.route('/update_petugas/<id>')
-def update_petugas(id):
+@admin_bp.route('/update_petugas/<uid>')
+def update_petugas(uid):
     if 'loggedin' in session and session['role'] == 'admin':
         try:
             cur = db.cursor()
-            cur.execute(' select * from petugas where id = %s ', (id,))
+            cur.execute(' select * from petugas where uuid = %s ', (uid,))
             data = cur.fetchall()
+            if not data:
+                flash('Data Not Found', 'danger')
+                return redirect(url_for('admin_bp.petugas'))
             return render_template('edit_petugas.html', datas=data)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -116,23 +119,22 @@ def update_petugas(id):
 @admin_bp.route('/edit_petugas',methods=['POST'] )
 def edit_petugas():
     if 'loggedin' in session and session['role'] == 'admin':
-        id = request.form['id']
+        uid = request.form['uid']
         nama = request.form['nama']
         email = request.form['email']
         alamat = request.form['alamat']
         no_tlp = request.form['no_tlp']
-        # int(id)
         if nama and email and alamat and no_tlp:
             try:
                 cur = db.cursor()
-                cur.execute('''UPDATE petugas SET nama = %s, email = %s, alamat = %s, no_tlp = %s WHERE id = %s''', (nama,email,alamat,no_tlp,id,))
+                cur.execute('''UPDATE petugas SET nama = %s, email = %s, alamat = %s, no_tlp = %s WHERE uuid = %s''', (nama,email,alamat,no_tlp,uid,))
                 db.commit()
                 session['nama'] = nama
                 flash('Data Berhasil Diupdate', 'primary')
                 return redirect(url_for('admin_bp.petugas'))
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='gagal, terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close()
@@ -140,23 +142,19 @@ def edit_petugas():
         return redirect(url_for('admin_bp.dashboard'))
     abort(401)
 
-@admin_bp.route('/me')
-def update_me():
-    if 'loggedin' in session and session['role'] == 'admin':
-        pass
-
-@admin_bp.route('/change_passwd/<id>')
-def password_change(id):
+@admin_bp.route('/change_passwd/<uid>')
+def password_change(uid):
         if 'loggedin' in session and session['role'] == 'admin':
             cur = None
             try:
                 cur = db.cursor()
-                cur.execute('SELECT * FROM petugas WHERE id = %s', (id,))
+                cur.execute('SELECT * FROM petugas WHERE uuid = %s', (uid,))
                 data = cur.fetchone()
+                print(data)
                 return render_template('password_petugas.html', datas = data)
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close() 
@@ -166,39 +164,43 @@ def password_update():
     if 'loggedin' in session and session['role'] == 'admin':
         old_passwd = request.form['password_lama']
         new_passwd = request.form['password_baru']
-        id = request.form['id']
+        uid = request.form['uid']
         try:
             cur = db.cursor()
-            cur.execute('SELECT * FROM petugas WHERE id = %s', (id,))
+            cur.execute('SELECT * FROM petugas WHERE uuid = %s', (uid,))
             data = cur.fetchone()
-            if data:
-                if check_password_hash(data[3], old_passwd):
-                    cur.execute('UPDATE petugas SET password = %s where id = %s', (generate_password_hash(new_passwd), id,))
-                    db.commit()
-                    flash('Password Berhasil Diupdate', 'primary')
-                    return redirect(url_for('admin_bp.petugas'))
-            flash('Password Salah', 'danger')
-            return redirect(url_for('admin_bp.password_change', id=id))
+            if not data:
+                flash('Password Salah', 'danger')
+                return redirect(url_for('admin_bp.password_change', uid=uid))
+            if not check_password_hash(data[3], old_passwd):
+                flash('Password Salah', 'danger')
+                return redirect(url_for('admin_bp.password_change', uid=uid))   
+            cur.execute('UPDATE petugas SET password = %s where uuid = %s', (generate_password_hash(new_passwd), uid,))
+            db.commit()
+            flash('Password Berhasil Diupdate', 'primary')
+            return redirect(url_for('admin_bp.petugas'))
+            
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close() 
     abort(401)  
 
-@admin_bp.route('/delete_petugas/<id>')
-def delete_petugas(id):
+@admin_bp.route('/delete_petugas/<uid>')
+def delete_petugas(uid):
     if 'loggedin' in session and session['role'] == 'admin':
         try:
             cur = db.cursor()
-            cur.execute('DELETE FROM petugas WHERE id = %s', (id,))
+            cur.execute('DELETE FROM petugas WHERE uuid = %s', (uid,))
             db.commit()
+            flash('Data Berhasil Dihapus', 'primary')
             return redirect(url_for('admin_bp.petugas'))
 
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -215,7 +217,7 @@ def user():
             return render_template('users.html', datas = data)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close() 
@@ -224,7 +226,6 @@ def user():
 @admin_bp.route('/addAnggota', methods=['POST'])
 def add_anggota():
     if 'loggedin' in session and session['role'] == 'admin':
-        # if request.method == 'POST':
         nim = request.form['nim']
         nama = request.form['nama']
         email = request.form['email']
@@ -250,13 +251,13 @@ def add_anggota():
                 return redirect(url_for('admin_bp.user'))
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close()
         flash('Data Tidak Boleh Kosong', 'danger')
         return redirect(url_for('admin_bp.user'))
-    return jsonify(message='Unauthorized'),401
+    abort(401)
 
 @admin_bp.route('/delete_user/<nim>')
 def delete_user(nim):
@@ -269,7 +270,7 @@ def delete_user(nim):
 
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -281,7 +282,7 @@ def books():
     if 'loggedin' in session and session['role'] == 'admin':
         try:
             cur = db.cursor()
-            cur.execute('SELECT b.*, p.nama FROM buku as b, petugas as p WHERE p.id = b.id_petugas ')
+            cur.execute('SELECT b.*, p.nama FROM buku as b, petugas as p WHERE p.id = b.id_petugas')
             data = cur.fetchall()
 
             cur.execute('SELECT SUM(stok_buku) FROM buku')
@@ -289,7 +290,7 @@ def books():
             return render_template('books.html', datas = data, stok=stok)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -322,7 +323,7 @@ def add_book():
                 return redirect(url_for('admin_bp.books'))
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server', Error=err), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close()
@@ -340,7 +341,7 @@ def edit_book(id):
             return render_template('edit_books.html', datas=data)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -367,7 +368,7 @@ def update_book():
                 return redirect(url_for('admin_bp.books'))
             except Exception as err:
                 print(f'Error: {err}')
-                return jsonify(message='terjadi kesalahan di server'), 500
+                abort(500)
             finally:
                 if cur:
                     cur.close()
@@ -386,7 +387,7 @@ def delete_book(id):
             return redirect(url_for('admin_bp.books'))
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -411,7 +412,7 @@ def show():
             return render_template('pinjam.html', datas=data, result=result, judul_buku=judul_buku)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -428,28 +429,19 @@ def pinjam():
         cur = None
         try:
             cur = db.cursor()
-            # cur.execute('SELECT * FROM buku WHERE judul_buku = %s', (judul_buku))
-            # data = cur.fetchone()
-            # if data is None:
-            #     return jsonify(message='judul buku tidak ditemukan'),404
-            
-            # cur.execute('SELECT * FROM anggota WHERE nim = %s', (nim_peminjam))
-            # nim = cur.fetchone()
-            # if nim is None:
-            #     return jsonify(message='nim tidak terdaftar'),404
             db.begin()
             cur.execute('''INSERT INTO pinjam_kembali(nim_anggota,judul_buku,tgl_pinjam,tgl_batas_pinjam,id_petugas) 
                         VALUES(%s,%s,%s,%s,%s)''', (nim_peminjam,judul_buku,tgl_pinjam,tgl_batas_pinjam,id_petugas,))
 
             cur.execute('UPDATE buku SET stok_buku = stok_buku - 1 WHERE judul_buku = %s', (judul_buku,))
             db.commit()
-            flash('Success', 'primary')
+            flash('Peminjaman Berhasil', 'primary')
             return redirect(url_for('admin_bp.show'))
              
         except Exception as err:
             print(f'Error: {err}')
             db.rollback()
-            return jsonify(message='terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -462,7 +454,6 @@ def update_deadline(id):
             cur = db.cursor()
             cur.execute('SELECT tgl_batas_pinjam FROM pinjam_kembali WHERE id = %s', (id,))
             data = cur.fetchone()
-            # day = data[0]
             update_day = data[0] + timedelta(days=7)
 
             cur.execute('UPDATE pinjam_kembali SET tgl_batas_pinjam = %s WHERE id = %s', (update_day,id,))
@@ -472,7 +463,6 @@ def update_deadline(id):
         except Exception as err:
             print(f'Error: {err}')
             abort(500)
-            # return jsonify(message='terjadi kesalahan di server'), 500
         finally:
             if cur:
                 cur.close()
@@ -498,7 +488,7 @@ def show_pengembalian():
             return render_template('pengembalian.html', datas=data, result=result, judul_buku=judul_buku)
         except Exception as err:
             print(f'Error: {err}')
-            return jsonify(message='gagal, terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
@@ -523,7 +513,6 @@ def pengembalian():
             if data is None:
                 flash('Data Salah', 'danger')
                 return redirect(url_for('admin_bp.show_pengembalian'))
-            db.begin()
             tgl_batas_pinjam = data[4]
             if tgl_kembali > tgl_batas_pinjam:
                 hari_terlambat = (tgl_kembali - tgl_batas_pinjam).days
@@ -534,11 +523,11 @@ def pengembalian():
                             (denda,status,id_petugas,tgl_kembali,nim,judul_buku,))
                 
                 cur.execute('''UPDATE buku set stok_buku = stok_buku + 1 WHERE judul_buku = %s''', (judul_buku,))
-
+                db.commit
                 flash(f'Buku Terlambat Dikembalikan Selama {hari_terlambat} hari Denda = {denda}', 'primary')
                 return redirect(url_for('admin_bp.show_pengembalian'))
             else:
-                
+                db.begin()
                 cur.execute('''UPDATE pinjam_kembali SET status = %s, id_petugas = %s,tgl_kembali = %s 
                             WHERE nim_anggota = %s AND judul_buku = %s''',
                             (status,id_petugas,tgl_kembali,nim,judul_buku,))
@@ -550,80 +539,8 @@ def pengembalian():
         except Exception as err:
             print(f'Error: {err}')
             db.rollback()
-            return jsonify(message='Terjadi kesalahan di server'), 500
+            abort(500)
         finally:
             if cur:
                 cur.close()
-    return jsonify(message='Unauthorized'), 401
-
-# admin
-@admin_bp.route('/getAllPinjamAktif')
-def get_all_riwayat_aktif():
-    if 'loggedin' in session and session['role'] == 'admin':
-        cur = None
-        status = 'dipinjam'
-        try:
-            cur = db.cursor()
-            cur.execute('''SELECT pk.id, a.nama, a.nim,b.judul_buku, p.nama,pk.tgl_pinjam,pk.tgl_batas_pinjam 
-                        FROM pinjam_kembali as pk, anggota as a, buku as b, petugas as p 
-                        WHERE pk.nim_anggota = a.nim and pk.judul_buku = b.judul_buku and pk.id_petugas = p.id and status = %s''', (status,))
-            data = cur.fetchall()
-            if data:
-                return jsonify(data),200
-            return jsonify(message='not found'),404
-        except Exception as err:
-            print(f'Error: {err}')
-            db.rollback()
-            return jsonify(message='terjadi kesalahan di server'), 500
-        finally:
-            if cur:
-                cur.close()
-    return jsonify(message='Unauthorized'),401
-
-@admin_bp.route('/getAllriwayat')
-def all_riwayat():
-    pass
-
-
-
-# admin
-
-# admin
-@admin_bp.route('/search', methods=['POST'])
-def search():
-    if 'loggedin' in session and session['role'] == 'admin':
-    # Mendapatkan data pencarian dari permintaan POST
-        judul_buku = request.form['searchTerm']
-
-        cur = None
-        # Membuat kursor database
-        try:
-            cursor = db.cursor()
-
-            # Mengeksekusi query untuk mencari data di database
-            query = "SELECT * FROM buku WHERE judul_buku LIKE %s"
-            cursor.execute(query, (f'%{judul_buku}%',))
-
-            # Mengambil semua hasil pencarian
-            results = cursor.fetchall()
-            if results:
-                # Menyusun hasil pencarian menjadi list
-                search_results = [row[0] for row in results]  # Menggunakan indeks kolom yang sesuai dengan kolom "nama_produk"
-                # Menyusun hasil pencarian menjadi format JSON
-                response = {
-                    'results': search_results
-                }
-            # Mengembalikan hasil pencarian dalam format JSON
-                return jsonify(response),200
-            return jsonify(message='buku tidak ditemukam'),404
-        except Exception as err:
-            print(f'Eror: {err}')
-            return jsonify(message='terjadi kesalahan di server'), 500
-        finally:
-            if cur:
-                cur.close()
-
-    return jsonify(message='Unauthorized'),401
-@admin_bp.route('/index')
-def index():
-    return render_template('search.html')
+    abort(500)

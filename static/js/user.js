@@ -14,7 +14,7 @@ $(document).ready(function(){
 });
 
 $(document).ready(function(){		
-	$('#addUser').click(function(){
+	$('#addpetugas').click(function(){
 		$('#petugasModal').modal({
 			backdrop: 'static',
 			keyboard: false

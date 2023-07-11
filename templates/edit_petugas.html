@@ -6,7 +6,7 @@
     <div class="row row-offcanvas row-offcanvas-left">   
 	  {% include 'left_menus.html' %}	
       <div class="col-md-9 col-lg-10 main"> 
-		<h3>Edit User</h3>
+		<h3>Edit {{datas[0][1]}}</h3>
 		<br>
         {% for data in datas %}
         <form method="post" id="userForm" action="{{ url_for('admin_bp.edit_petugas')}}">
@@ -34,7 +34,7 @@
 				</div>
 				<div class="modal-footer">
 											
-					<input type="hidden" name="id" id="action" value="{{data[0]}}" />
+					<input type="hidden" name="uid" id="action" value="{{data[7]}}" />
 					<input type="submit" name="save" id="save" class="btn btn-info" value="Save" />	
 					<a href="{{url_for('admin_bp.petugas')}}"><input type="button" name="save" id="save" class="btn btn-warning" value="Back" /></a>					
 				</div>
