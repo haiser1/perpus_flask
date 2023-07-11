@@ -1,4 +1,4 @@
-# cara pake
+# cara install
 1. buat dulu databasenya
 2. import database perpus.sql ke database dengan perintah mysql -u root -p nama_db < path tempat file perpus.sql
 3. buat virtual env dengan perintah python -m venv <nama env>
