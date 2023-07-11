@@ -31,6 +31,7 @@ CREATE TABLE `anggota` (
   `no_tlp` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `role` varchar(10) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'user',
   `id_petugas` int NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`nim`),
   KEY `fk_anggota_petugas` (`id_petugas`),
   CONSTRAINT `fk_anggota_petugas` FOREIGN KEY (`id_petugas`) REFERENCES `petugas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -43,7 +44,7 @@ CREATE TABLE `anggota` (
 
 LOCK TABLES `anggota` WRITE;
 /*!40000 ALTER TABLE `anggota` DISABLE KEYS */;
-INSERT INTO `anggota` VALUES ('21.83.1234','dadang','dadang@gmail.com','pbkdf2:sha256:600000$GrMnAOHRT8JCTIzs$598091807b3adf577d58d82822893bb337dbc26afee2e0423a0973dcdabf7cad','bantul','1234','user',3),('21.83.1235','muklis','muklis@gmail.com','pbkdf2:sha256:600000$KfaWW3WbOL2OzYaj$e743fb4d58a28f2a8149c4d7be47858fba27eb9bf1326514ac36ce43ece0ebc6','bantul','081235','user',4),('21.83.1237','Dobleh','dobleh@gmail.com','pbkdf2:sha256:600000$PZKvf6XSmEiwcXph$e5bd82108c37ecc9b528f3bc6ecc60fca6bf812aedf23495c085b29fdccf8568','jogja','08123467','user',3);
+INSERT INTO `anggota` VALUES ('21.83.0702','markus','markus@gmail.com','pbkdf2:sha256:600000$iFLXQVb7fj5zfzKm$e5d3d2870d7f113697f025b7a053f1c5f7377f02cac75e82e68761e67e9ea5e6','Konoha','0812346789','user',3,'aee96d61-3952-4fd7-9c82-556e40253b63'),('21.83.1234','mark','mark@gmail.com','pbkdf2:sha256:600000$qNusVwyO4Fkl9rpU$ab6af91fda2dc63bab0de9cc170e6c8c9d484d40aabec52585212a6a274f229f','Konoha','0812346789','user',3,'6fb58989-e8a6-4b93-924b-ca2331cce57d'),('21.83.1235','muklis','muklis@gmail.com','pbkdf2:sha256:600000$hJXh33z7rFdo2AM4$5f76e41adf4e614ebcf23b51cade1f2a61220cf9f14cc4a60f96d8d2c67e0b28','bantul','081235','user',4,'29b40f7d-0a6c-452e-a32f-69d9846ab8f8'),('21.83.1237','Dobleh','dobleh@gmail.com','pbkdf2:sha256:600000$PZKvf6XSmEiwcXph$e5bd82108c37ecc9b528f3bc6ecc60fca6bf812aedf23495c085b29fdccf8568','jogja','08123467','user',3,'59a920b4-3c75-403c-a6a1-d9d27f64233a');
 /*!40000 ALTER TABLE `anggota` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56,15 +57,13 @@ DROP TABLE IF EXISTS `buku`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `buku` (
   `judul_buku` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `uuid` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `penulis` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `penerbit` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `tahun_terbit` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
   `stok_buku` int DEFAULT NULL,
   `id_petugas` int NOT NULL,
   PRIMARY KEY (`judul_buku`),
-  UNIQUE KEY `uuid` (`uuid`),
-  UNIQUE KEY `uuid_2` (`uuid`),
   KEY `fk_buku_petugas` (`id_petugas`),
   CONSTRAINT `fk_buku_petugas` FOREIGN KEY (`id_petugas`) REFERENCES `petugas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -76,7 +75,7 @@ CREATE TABLE `buku` (
 
 LOCK TABLES `buku` WRITE;
 /*!40000 ALTER TABLE `buku` DISABLE KEYS */;
-INSERT INTO `buku` VALUES ('buku satu hati','37fee080-80c8-4612-80aa-7da1e0cf067c','muhdi','ganesha','2013',15,4),('Malam Sepi Sunyi','859e71d9-d58b-4d46-a20e-d4ec8e8ajdsj','Mas','eang wiro','2019',17,4),('Si Buta Dari Gua Hantu','859e71d9-d58b-4d46-a20e-d4ec8e89wake','mark','buana','2020',13,3);
+INSERT INTO `buku` VALUES ('buku satu hati','37fee080-80c8-4612-80aa-7da1e0cf067c','muhdi','ganesha','2013',14,3),('Malam Sepi Sunyi','859e71d9-d58b-4d46-a20e-d4ec8e8ajdsj','Mas','eang wiro','2019',17,4),('Si Buta Dari Gua Hantu','859e71d9-d58b-4d46-a20e-d4ec8e89wake','mark','buana','2020',12,3);
 /*!40000 ALTER TABLE `buku` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -95,8 +94,9 @@ CREATE TABLE `petugas` (
   `alamat` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   `no_tlp` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
   `role` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'admin',
+  `uuid` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -105,7 +105,7 @@ CREATE TABLE `petugas` (
 
 LOCK TABLES `petugas` WRITE;
 /*!40000 ALTER TABLE `petugas` DISABLE KEYS */;
-INSERT INTO `petugas` VALUES (3,'admin','admin@gmail.com','pbkdf2:sha256:600000$lFpquFGmQ9mjiJoN$0ee915051943a2c0cf82fa60b1e72b0b2f89f1e33d8ac6a13047c892532c49c3','jogja','0812345678','admin'),(4,'petugas','petugas@gmail.com','pbkdf2:sha256:600000$tgjQcaRtNbnC4KzM$92bd78aa512cc5e86536d3d90e43fb47690b33e0d52b8c88f70dd793c812d023','bogor','0812345679','admin'),(7,'markus','markus@gmali.com','pbkdf2:sha256:600000$1UvmGrvzoiY39F5c$13760f5fc548cd4828251bd22e4f2c2cc05557390fde861833b8d7ef95a5966e','jogja','08123467','admin');
+INSERT INTO `petugas` VALUES (3,'admin','admin@gmail.com','pbkdf2:sha256:600000$xQ37VWGPZ6aKi6WN$3bf8dda3fc5bddd94ce8e5eda17a295eb8679e10d1b8fad2471412d68e3ea01d','jogja','0812345678','admin','b0418746-6aac-46a6-af68-8e48e919ba24'),(4,'petugas','petugas@gmail.com','pbkdf2:sha256:600000$tgjQcaRtNbnC4KzM$92bd78aa512cc5e86536d3d90e43fb47690b33e0d52b8c88f70dd793c812d023','bogor','0812345679','admin','3b825b97-3732-4b60-9d2a-e31e29f478bd'),(7,'rabin','rabin@gmali.com','pbkdf2:sha256:600000$Q3elXzm0NdlY94BL$cae2240b3d6fe14fa5178d1c742993e7eaf640ee600c7d92b26cbc1855f92974','jogja','08123467','admin','cc85b866-d5f1-4ebf-a193-87411cb6a1bf');
 /*!40000 ALTER TABLE `petugas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -133,7 +133,7 @@ CREATE TABLE `pinjam_kembali` (
   CONSTRAINT `fk_anggota` FOREIGN KEY (`nim_anggota`) REFERENCES `anggota` (`nim`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_buku` FOREIGN KEY (`judul_buku`) REFERENCES `buku` (`judul_buku`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_pinjam_petugas` FOREIGN KEY (`id_petugas`) REFERENCES `petugas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,7 +142,7 @@ CREATE TABLE `pinjam_kembali` (
 
 LOCK TABLES `pinjam_kembali` WRITE;
 /*!40000 ALTER TABLE `pinjam_kembali` DISABLE KEYS */;
-INSERT INTO `pinjam_kembali` VALUES (17,'21.83.1235','Si Buta Dari Gua Hantu','2023-07-06 14:06:38','2023-07-13 14:06:38',NULL,'dipinjam','0',4),(18,'21.83.1235','buku satu hati','2023-07-06 14:30:29','2023-07-13 14:30:29',NULL,'dipinjam','0',4),(23,'21.83.1235','Malam Sepi Sunyi','2023-07-07 20:01:43','2023-07-14 20:01:43','2023-07-07 20:04:02','dikembalikan','0',7),(24,'21.83.1234','Malam Sepi Sunyi','2023-07-08 00:06:30','2023-07-15 00:06:30','2023-07-08 00:20:31','dikembalikan','0',3),(25,'21.83.1234','Si Buta Dari Gua Hantu','2023-07-08 00:20:20','2023-07-15 00:20:20',NULL,'dipinjam','0',3);
+INSERT INTO `pinjam_kembali` VALUES (17,'21.83.1235','Si Buta Dari Gua Hantu','2023-07-06 14:06:38','2023-07-13 14:06:38',NULL,'dipinjam','0',4),(18,'21.83.1235','buku satu hati','2023-07-06 14:30:29','2023-07-13 14:30:29','2023-07-08 16:10:23','dikembalikan','0',3),(23,'21.83.1235','Malam Sepi Sunyi','2023-07-07 20:01:43','2023-07-14 20:01:43','2023-07-07 20:04:02','dikembalikan','0',7),(24,'21.83.1234','Malam Sepi Sunyi','2023-07-08 00:06:30','2023-07-15 00:06:30','2023-07-08 00:20:31','dikembalikan','0',3),(25,'21.83.1234','Si Buta Dari Gua Hantu','2023-07-08 00:20:20','2023-07-15 00:20:20',NULL,'dipinjam','0',3),(26,'21.83.1237','buku satu hati','2023-07-08 02:43:16','2023-07-15 02:43:16',NULL,'dipinjam','0',3),(27,'21.83.1234','buku satu hati','2023-07-08 02:44:02','2023-07-15 02:44:02',NULL,'dipinjam','0',3),(28,'21.83.0702','Si Buta Dari Gua Hantu','2023-07-11 19:07:04','2023-07-18 19:07:04',NULL,'dipinjam','0',3);
 /*!40000 ALTER TABLE `pinjam_kembali` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -155,4 +155,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-08  0:57:56
+-- Dump completed on 2023-07-11 19:36:36
