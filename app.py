@@ -1,5 +1,5 @@
 from flask import Flask
-from routes.admin.route import admin_bp
+from routes.admin_petugas.route import admin_bp
 from routes.user.route import user_bp
 from dotenv import load_dotenv
 import os

@@ -20,7 +20,10 @@
 				<th><h6>Email</h6></th>				
 				<th><h6>Alamat</h6></th>
 				<th><h6>No Telpon</h6></th>
+				<th><h6>Petugas</h6></th>
+				{%if session['role'] == 'admin'%}
 				<th><h6>Action</h6></th>
+				{%endif%}
 			  </tr>
 			</thead>
 			<tbody>
@@ -30,9 +33,13 @@
 				<td>{{data[1]}}</td>
 				<td>{{data[2]}}</td>
 				<td>{{data[4]}}</td>	
-				<td>{{data[5]}}</td>				
+				<td>{{data[5]}}</td>	
+				<td>{{data[9]}}</td>	
+				<td><a href="{{url_for('admin_bp.show_anggota', uid=data[8])}}" class="btn btn-primary">Edit</a></td>		
+				{%if session['role'] == 'admin'%}	
 				<td><a href="{{url_for('admin_bp.delete_user', nim=data[0])}}" 
 					onclick="return confirm('yakin akan menghapus Data ???')" class="btn btn-danger">Delete</a></td>
+				{%endif%}
 			  </tr> 
 			{% endfor %}	  
 			</tbody>
@@ -52,29 +59,29 @@
 						
 						<div class="form-group">							
 							<label for="first name" class="control-label">Nim</label>							
-							<input type="number" name="nim" id="first_name" autocomplete="off" class="form-control" placeholder="Nim Anggota"/>
+							<input type="text" name="nim" id="first_name" autocomplete="off" class="form-control" required/>
 											
 						</div>
 						<div class="form-group">
 							<label for="email" class="control-label">Nama</label>
-							<input type="text" class="form-control" id="email" name="nama" placeholder="Nama" >			
+							<input type="text" class="form-control" id="email" name="nama" required >			
 						</div>
 						<div class="form-group">
 							<label for="email" class="control-label">Email</label>
-							<input type="email" class="form-control" id="email" name="email" placeholder="Email" >			
+							<input type="email" class="form-control" id="email" name="email" required>			
 						</div>
 						
 						<div class="form-group">
 							<label for="new password" class="control-label">Password</label>
-							<input type="password" class="form-control" id="password" name="password" placeholder="password" >			
+							<input type="password" class="form-control" id="password" name="password"  required >			
 						</div>
 						<div class="form-group">
 							<label for="last name" class="control-label">Alamat</label>
-							<input type="text" class="form-control" id="last_name" name="alamat" placeholder="" >			
+							<input type="text" class="form-control" id="last_name" name="alamat" required >			
 						</div>	
 						<div class="form-group">
 							<label for="last name" class="control-label">No Telepon</label>
-							<input type="number" class="form-control" id="last_name" name="no_tlp" placeholder="" >			
+							<input type="number" class="form-control" id="last_name" name="no_tlp" required>			
 						</div>	
 										
 					</div>

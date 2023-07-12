@@ -1,4 +1,4 @@
-from flask import render_template, request, session, Blueprint, abort, redirect, url_for, flash
+from flask import render_template, request, session, Blueprint, abort, redirect, url_for, flash,jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from connection_db.data_base import db
 from uuid import uuid4
@@ -35,6 +35,7 @@ def edit_user():
         email = request.form['email']
         alamat = request.form['alamat']
         no_tlp = request.form['no_tlp']
+        nama = nama.title()
         cur = None
         if nama and email and alamat and no_tlp:
             try:

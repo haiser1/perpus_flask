@@ -52,7 +52,7 @@ def login_user():
             if check_password_hash(data[3], password):
                 session['loggedin'] = True
                 session['nim'] = data[0]
-                session['nama'] = data[1]
+                session['nama'] = str.capitalize(data[1])
                 session['email'] = data[2]
                 session['role'] = data[6]
                 session['uuid'] = data[8]

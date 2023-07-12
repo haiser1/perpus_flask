@@ -37,10 +37,11 @@
 					<td>{{data[4]}}</td>
 					<td>{{data[5]}}</td>
 					<td>{{data[7]}}</td>				
-					<td><a href="{{url_for('admin_bp.edit_book', id=data[1])}}" class="btn btn-primary">Edit</a></td>	
+					<td><a href="{{url_for('admin_bp.edit_book', id=data[1])}}" class="btn btn-primary">Edit</a></td>
+					{%if session['role'] == 'admin'%}	
 					<td><a href="{{url_for('admin_bp.delete_book', id=data[1])}}" 
 						onclick="return confirm('yakin akan menghapus Data ???')" class="btn btn-danger">Delete</a></td>
-					
+					{%endif%}
 				  </tr>
 				  {%endfor%} 
 			</tbody>
@@ -67,23 +68,23 @@
 					<div class="modal-body">						
 						<div class="form-group">							
 							<label for="book" class="control-label">Judul Buku</label>							
-							<input type="text" name="judul" id="name" autocomplete="off" class="form-control" placeholder="Judul Buku"/>											
+							<input type="text" name="judul" id="name" autocomplete="off" class="form-control" required/>											
 						</div>
 						<div class="form-group">							
 							<label for="author" class="control-label">Penulis</label>
-							<input type="text" name="penulis" id="name" autocomplete="off" class="form-control" placeholder="Penulis"/>											
+							<input type="text" name="penulis" id="name" autocomplete="off" class="form-control" required/>											
 						</div>							
 						<div class="form-group">							
 							<label for="publisher" class="control-label">Penerbit</label>
-							<input type="text" name="penerbit" id="name" autocomplete="off" class="form-control" placeholder="Penerbit"/>	
+							<input type="text" name="penerbit" id="name" autocomplete="off" class="form-control" required/>	
 						</div>
 						<div class="form-group">							
 							<label for="category" class="control-label">Tahun Terbit</label>
-							<input type="number" name="tahun_terbit" id="name" autocomplete="off" class="form-control" placeholder="Tahun Terbit"/>		
+							<input type="number" name="tahun_terbit" id="name" autocomplete="off" class="form-control" required/>		
 						</div>								
 						<div class="form-group">							
 							<label for="rack" class="control-label">Stok</label>
-							<input type="number" name="stok" id="name" autocomplete="off" class="form-control" placeholder="Stok"/>		
+							<input type="number" name="stok" id="name" autocomplete="off" class="form-control" required/>		
 						</div>																										
 					</div>
 					<div class="modal-footer mt-0">

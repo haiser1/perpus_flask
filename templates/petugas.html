@@ -7,9 +7,11 @@
 	  {% include 'left_menus.html' %}	
       <div class="col-md-9 col-lg-10 main"> 
 		<h3>List Petugas</h3>
+		{%if session['role'] == 'admin'%}
 			<div class="float-right mb-2 col-md-2">
 				<button type="button" id="addpetugas" class="btn btn-info" title="Add Petugas"><span class="glyphicon glyphicon-plus">Add Petugas</span></button>
 			</div>
+		{%endif%}
 			<br>
 			<table class="table table-striped">
 			<thead>
@@ -18,8 +20,10 @@
 				<th><h6>Email</h6></th>				
 				<th><h6>Alamat</h6></th>
 				<th><h6>No Telpon</h6></th>
-				<th></th>
+				<th><h6>Role</h6></th>
+				{%if session['role'] == 'admin'%}
 				<th><h6>Action</h6></th>
+				{%endif%}
 			  </tr>
 			</thead>
 			<tbody>
@@ -28,12 +32,14 @@
 				<td>{{data[1]}}</td>
 				<td>{{data[2]}}</td>
 				<td>{{data[4]}}</td>
-				<td>{{data[5]}}</td>	
+				<td>{{data[5]}}</td>
+				<td>{{data[6]}}</td>	
+				{%if session['role'] == 'admin'%}
 				<td><a href="{{url_for('admin_bp.update_petugas', uid=data[7])}}" class="btn btn-primary">Edit</a></td>
 				<td><a href="{{url_for('admin_bp.delete_petugas', uid=data[7])}}" onclick="return confirm('yakin akan menghapus Data ???')" 
 					class="btn btn-danger">Delete</a></td>
 					<td><a href="{{url_for('admin_bp.password_change', uid=data[7])}}" class="btn btn-warning">Change Password</a></td>
-				
+				{%endif%}
 			  </tr> 
 			{% endfor %}	  
 			</tbody>
@@ -47,30 +53,37 @@
 			<form method="post" id="userForm" action="{{ url_for('admin_bp.add_petugas')}}">
 				<div class="modal-content">
 					<div class="modal-header">						
-						<h4 class="modal-title"><i class="fa fa-plus"></i> Edit User</h4>
+						<h4 class="modal-title"><i class="fa fa-plus"></i></h4>
 					</div>
 					<div class="modal-body">						
 						<div class="form-group">
 							<label for="email" class="control-label">Nama</label>
-							<input type="text" class="form-control" id="email" name="nama" placeholder="Nama" >			
+							<input type="text" class="form-control" id="email" name="nama" required>			
 						</div>
 						<div class="form-group">
 							<label for="email" class="control-label">Email</label>
-							<input type="email" class="form-control" id="email" name="email" placeholder="Email" >			
+							<input type="email" class="form-control" id="email" name="email" required >			
 						</div>
 						
 						<div class="form-group">
 							<label for="new password" class="control-label">Password</label>
-							<input type="password" class="form-control" id="password" name="password" placeholder="password" >			
+							<input type="password" class="form-control" id="password" name="password" required >			
 						</div>
 						<div class="form-group">
 							<label for="last name" class="control-label">Alamat</label>
-							<input type="text" class="form-control" id="last_name" name="alamat" placeholder="" >			
+							<input type="text" class="form-control" id="last_name" name="alamat" required>			
 						</div>	
 						<div class="form-group">
 							<label for="last name" class="control-label">No Telepon</label>
-							<input type="number" class="form-control" id="last_name" name="no_tlp" placeholder="" >			
-						</div>					
+							<input type="number" class="form-control" id="last_name" name="no_tlp" required >			
+						</div>		
+						<div class="form-group">
+							<label for="status" class="control-label">Role</label>							
+							<select class="form-control" id="status" name="role">							
+								<option value="petugas" selected="selected" >petugas</option>							
+								<option value="admin" selected="selected" >admin</option>							
+							</select>							
+						</div>				
 					</div>
 					<div class="modal-footer">
 						<input type="hidden" name="userid" id="userid" />						

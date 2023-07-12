@@ -5,7 +5,7 @@
     <div class="navbar-collapse collapse" id="collapsingNavbar">
       <ul class="navbar-nav">
         <li class="nav-item active">
-			{%if session['role'] == 'admin'%}
+			{%if session['role'] == 'admin' or session['role'] == 'petugas'%}
            <h1><a class="nav-link" href="{{url_for('admin_bp.dashboard')}}">Management Perpus<span class="sr-only">LMS</span></a></h1>
 		   {%else%}
            <h1><a class="nav-link" href="{{url_for('admin_bp.dashboard')}}">Dashboard User<span class="sr-only">LMS</span></a></h1>
@@ -31,8 +31,12 @@
   {% endwith %}
 	  <ul class="navbar-nav ml-auto ml-0">		
 			<li class="nav-item">
-				<h4><a class="nav-link" id="update_me" data-bs-toggle="modal" data-bs-target="#update_me" href="">Hallo {{session['nama']}} </a> </h4>
-			</li>		
+        {%if session['role'] == 'petugas'%}
+				<h4><a class="nav-link" id="update_me" data-bs-toggle="modal" data-bs-target="#update_me" href="{{url_for('admin_bp.show_me', uid=session['uuid'])}}">Hallo {{session['nama']}} </a></h4>
+        {%else%}
+        <h4><a class="nav-link" id="update_me" data-bs-toggle="modal" data-bs-target="#update_me" href="">Hallo {{session['nama']}} </a></h4>
+        {%endif%}
+      </li>		
       </ul>	  
     </div>	
     <script>

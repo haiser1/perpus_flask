@@ -1,6 +1,6 @@
 <div class="col-md-3 col-lg-2 sidebar-offcanvas bg-dark fixed-height-sidebar shadow-lg" id="sidebar" role="navigation">
 <ul class="nav flex-column pl-1 leftMenus">
-	{% if session['role'] == 'admin' %}		
+	{% if session['role'] == 'admin' or session['role'] == 'petugas' %}		
 <li class="nav-item">
 	<a class="nav-link" href="{{ url_for('admin_bp.dashboard') }}"><strong>Dashboard</strong></a>
 </li>

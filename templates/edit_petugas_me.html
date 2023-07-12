@@ -6,10 +6,10 @@
     <div class="row row-offcanvas row-offcanvas-left">   
 	  {% include 'left_menus.html' %}	
       <div class="col-md-9 col-lg-10 main"> 
-		<h3>Edit Petugas</h3>
+		<h3>Data Anda</h3>
 		<br>
         {% for data in datas %}
-        <form method="post" id="userForm" action="{{ url_for('admin_bp.edit_petugas')}}">
+        <form method="post" id="userForm" action="{{ url_for('admin_bp.edit_petugas_me')}}">
 			<div class="modal-content">			
 				<div class="modal-body">				
 					<div class="form-group">							
@@ -21,7 +21,7 @@
 						<label for="last name" class="control-label">Email</label>
 						<input type="email" class="form-control" id="last_name" name="email" required value="{{data[2]}}">			
 					</div>	
-
+		
 					<div class="form-group">
 						<label for="email" class="control-label">Alamat</label>
 						<input type="text" class="form-control" id="email" name="alamat" required value="{{data[4]}}">			
@@ -29,24 +29,21 @@
 					<div class="form-group">
 						<label for="email" class="control-label">No Telpon</label>
 						<input type="number" class="form-control" id="email" name="no_tlp" required value="{{data[5]}}">			
-					</div>		
-					<div class="form-group">
-						<label for="status" class="control-label">Role</label>							
-						<select class="form-control" id="status" name="role">							
-							<option value="petugas" selected="selected" >petugas</option>							
-							<option value="admin" selected="selected" >admin</option>							
-						</select>							
-					</div>						
-									
+					</div>											
 				</div>
-				<div class="modal-footer">
-											
+				<div class="modal-footer">				
 					<input type="hidden" name="uid" id="action" value="{{data[7]}}" />
-					<input type="submit" name="save" id="save" class="btn btn-info" value="Save" />	
-					<a href="{{url_for('admin_bp.petugas')}}"><input type="button" name="save" id="save" class="btn btn-warning" value="Back" /></a>					
+					<input type="submit" name="save" id="save" class="btn btn-info" value="Update" />
+					<a href="{{url_for('admin_bp.update_pass_me', uid=session['uuid'])}}">
+						<input type="button" name="save" id="save" class="btn btn-warning" value="Change Password" />
+					</a>	
+					<a href="{{url_for('admin_bp.petugas')}}">
+						<input type="button" name="save" id="save" class="btn btn-warning" value="Back" />
+					</a>					
 				</div>
 			</div>
 		</form>
+		
         {% endfor %}	
     </div>
 			      

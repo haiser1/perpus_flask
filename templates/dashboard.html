@@ -7,7 +7,11 @@
       {% include 'left_menus.html' %}
       <div class="col-md-9 col-lg-10 main"> 
         {%if session['role'] == 'admin'%}
+		<h2>Dashboard Admin</h2>
+        {%elif session['role'] == 'petugas'%}
 		<h2>Dashboard Petugas</h2>
+    {%endif%}
+    {%if session['role'] == 'admin' or session['role'] == 'petugas'%}
     {%for x in data%} 
     
         <div class="row mb-3 shadow-lg ">		
