@@ -6,8 +6,8 @@ try:
     db = pymysql.connect(
         host = 'localhost',
         user = 'root',
-        password = '',
-        db = 'perpus'
+        password = os.getenv('PASSWORD_DB'),
+        db = os.getenv('DB_NAME')
     )
     print('berhasil konek ke database')
 except Exception as err:

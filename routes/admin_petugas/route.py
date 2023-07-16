@@ -17,15 +17,18 @@ def dashboard():
             cur = db.cursor()
             cur.execute(''' SELECT
                         (SELECT COUNT(*) FROM buku) AS jml_petugas,
-                        (SELECT COUNT(*) FROM anggota) AS jml_anggota''')
+                        (SELECT COUNT(*) FROM anggota) AS jml_anggota,
+                        (SELECT COUNT(*) FROM pinjam_kembali WHERE status = %s) as jml_buku_dipinjam ,
+                        (SELECT COUNT(*) FROM pinjam_kembali WHERE status = %s) as jml_buku_dikembalikan''',
+                        (status_pinjam, status_kembali,))
             data = cur.fetchall()
 
-            cur.execute('SELECT COUNT(*) FROM pinjam_kembali WHERE status = %s', (status_pinjam,))
-            dipinjam = cur.fetchall()
+            # cur.execute('SELECT COUNT(*) FROM pinjam_kembali WHERE status = %s', (status_pinjam,))
+            # dipinjam = cur.fetchall()
 
-            cur.execute('SELECT COUNT(*) FROM pinjam_kembali WHERE status = %s', (status_kembali,))
-            dikembalikan = cur.fetchall()
-            return render_template('dashboard.html', data = data, pinjam = dipinjam, kembali = dikembalikan)
+            # cur.execute('SELECT COUNT(*) FROM pinjam_kembali WHERE status = %s', (status_kembali,))
+            # dikembalikan = cur.fetchall()
+            return render_template('dashboard.html', data = data)
             
         except Exception as err:
             print(f'Error: {err}')
@@ -557,6 +560,8 @@ def show():
 
             cur.execute('SELECT judul_buku FROM buku')
             judul_buku = cur.fetchall() 
+
+
             return render_template('pinjam.html', datas=data, result=result, judul_buku=judul_buku)
         except Exception as err:
             print(f'Error: {err}')
@@ -628,12 +633,8 @@ def show_pengembalian():
                         WHERE p.id = pk.id_petugas and a.nim=pk.nim_anggota and pk.status = %s''', (status))
             data = cur.fetchall()
 
-            cur.execute('SELECT nim FROM anggota')
-            result = cur.fetchall()
-
-            cur.execute('SELECT judul_buku FROM buku')
-            judul_buku = cur.fetchall() 
-            return render_template('pengembalian.html', datas=data, result=result, judul_buku=judul_buku)
+            
+            return render_template('pengembalian.html', datas=data)
         except Exception as err:
             print(f'Error: {err}')
             abort(500)
