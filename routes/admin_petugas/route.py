@@ -7,6 +7,10 @@ import uuid
 
 admin_bp = Blueprint('admin_bp', __name__)
 
+@admin_bp.route('/')
+def home():
+    return "Hello World"
+
 @admin_bp.route('/dashboard')
 def dashboard():
     if 'loggedin' in session and (session['role'] == 'admin' or session['role'] == 'petugas'):
